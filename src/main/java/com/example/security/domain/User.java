@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Set;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * @author VIVEK KUMAR SINGH
@@ -16,19 +18,40 @@ public class User {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private int id;
 
+  @NotBlank
+  @Size(max = 40)
+  @Email
   private String email;
 
+//  @JsonIgnore
+  @NotBlank
+//  @Size(min = 8, max = 30)
   private String password;
 
+  @NotBlank
+  @Size(min = 2, max = 30)
   private String name;
 
   private long mobile;
 
   private boolean active;
 
-  private Set<Role> roles;
+  //  private Set<Role> roles;
 
   public User() {}
+
+  public User(
+      @NotBlank @Size(max = 40) @Email String email,
+      @NotBlank @Size(min = 8, max = 30) String password,
+      @NotBlank @Size(min = 2, max = 30) String name,
+      long mobile,
+      boolean active) {
+    this.email = email;
+    this.password = password;
+    this.name = name;
+    this.mobile = mobile;
+    this.active = active;
+  }
 
   public User(User user) {
     this.id = user.getId();
@@ -37,7 +60,7 @@ public class User {
     this.name = user.getName();
     this.mobile = user.getMobile();
     this.active = user.isActive();
-    this.roles = user.getRoles();
+    //    this.roles = user.getRoles();
   }
 
   public int getId() {
@@ -88,13 +111,13 @@ public class User {
     this.active = active;
   }
 
-  public Set<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
-  }
+  //  public Set<Role> getRoles() {
+  //    return roles;
+  //  }
+  //
+  //  public void setRoles(Set<Role> roles) {
+  //    this.roles = roles;
+  //  }
 
   @Override
   public String toString() {
@@ -113,8 +136,8 @@ public class User {
         + mobile
         + ", active="
         + active
-        + ", roles="
-        + roles
+        //        + ", roles="
+        //        + roles
         + '}';
   }
 }

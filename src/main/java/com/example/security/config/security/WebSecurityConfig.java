@@ -27,30 +27,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) /*for method level security*/
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-  //  @Autowired private JwtAuthenticationProvider jwtAuthenticationProvider;
   @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
   @Autowired private UserDetailsService userDetailsService;
-
-  /**
-   * Create Authentication Manager with Custom Authentication Provider and inject this manager into
-   * the authentication filter
-   *
-   * @return
-   */
-  /*@Bean
-  public AuthenticationManager authenticationManager() {
-    return new ProviderManager(Collections.singletonList(jwtAuthenticationProvider));
-  }
-
-  @Bean
-  public JwtAuthenticationFilter authenticationFilter() {
-    JwtAuthenticationFilter filter = new JwtAuthenticationFilter();
-
-    filter.setAuthenticationManager(authenticationManager());
-    filter.setAuthenticationSuccessHandler(new JwtSuccessHandler());
-    return filter;
-  }*/
 
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
@@ -71,22 +50,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    /* Allow every request should be fully authenticated */
-    //    http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
-
     /**
-     * If u want specific request to be authorized, use antMatchers and then authenticated(){will
-     * ask spring security for from where these url should authenticated, then spring will send this
-     * to userdetailservice}.
+     * If u want specific request to be not authorized, then use permitAll(), else use antMatchers()
+     * and then authenticated(){will ask spring security for from where these url should
+     * authenticated, then spring will send this to userdetailservice}.
      *
      * <p>If user is not authenticated then we will move it to the exceptionHandling() and add some
      * entry point(for redirecting the error messages)
      *
      * <p>After that we need to maintain a session using stateless session creation policy
      */
-    http.csrf().disable();
+    http.cors().and().csrf().disable();
     http.authorizeRequests()
-        .antMatchers("**/api/**")
+        .antMatchers("/api/auth/**")
+        .permitAll()
+        .anyRequest()
         .authenticated()
         .and()
         .exceptionHandling()
